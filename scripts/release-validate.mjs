@@ -18,7 +18,7 @@ import { chromium } from "@playwright/test";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..");
-const expectedVersion = "0.1.0-rc.1";
+const expectedVersion = "0.1.0-rc.2";
 const expectedCoreVersion = "v0.1.4";
 const expectedCoreCommit = "d9a97cb";
 

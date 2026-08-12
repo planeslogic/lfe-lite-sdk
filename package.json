@@ -1,6 +1,6 @@
 {
   "name": "@planeslogic/lfe-lite",
-  "version": "0.1.0-rc.1",
+  "version": "0.1.0-rc.2",
   "description": "Official browser Distribution SDK for LFE Lite by PlanesLogic",
   "main": "./dist/index.js",
   "scripts": {

@@ -7,7 +7,7 @@ LFE Lite runs its Rust/WASM Core inside a dedicated Web Worker. The public appli
 ## Release
 
 ```text
-SDK:  0.1.0-rc.1
+SDK:  0.1.0-rc.2
 Core: v0.1.4 / d9a97cb
 ```
 

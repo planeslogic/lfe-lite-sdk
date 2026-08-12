@@ -1,0 +1,62 @@
+{
+  "name": "@planeslogic/lfe-lite",
+  "version": "0.1.0-rc.1",
+  "description": "Official browser Distribution SDK for LFE Lite by PlanesLogic",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "vitest run",
+    "build": "npm run core:embed && npm run build:js && npm run build:types",
+    "typecheck": "tsc --noEmit",
+    "build:js": "tsup",
+    "build:types": "tsc -p tsconfig.build.json",
+    "core:embed": "node scripts/embed-core.mjs",
+    "test:browser": "playwright test tests/browser/d2-bootstrap.spec.mjs tests/browser/d3-runtime.spec.mjs tests/browser/d4-branding.spec.mjs",
+    "test:browser:d4-license": "./scripts/d4-license-browser-validation.sh",
+    "release:pack": "npm run build && node scripts/release-pack.mjs",
+    "release:validate": "node scripts/release-validate.mjs"
+  },
+  "keywords": [
+    "lfe",
+    "planeslogic",
+    "wasm",
+    "webassembly",
+    "browser",
+    "filtering",
+    "local-first"
+  ],
+  "author": "PlanesLogic",
+  "license": "UNLICENSED",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "tsup": "^8.5.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/planeslogic/lfe-lite-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/planeslogic/lfe-lite-sdk/issues"
+  },
+  "homepage": "https://planeslogic.com",
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
+  }
+}

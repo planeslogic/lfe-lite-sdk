@@ -1,0 +1,12 @@
+{
+  "sdk": {
+    "version": "0.1.1",
+    "tag": "lfe-lite-sdk-v0.1.1",
+    "commit": "2f56104a207d104f3f1e412e15b044b356cd50be"
+  },
+  "core": {
+    "version": "0.1.0",
+    "tag": "lfe-core-lite-v0.1.0",
+    "commit": "d9e8bae01513a348c6dc1f55febdf15eaa0af403"
+  }
+}

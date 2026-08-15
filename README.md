@@ -7,11 +7,13 @@ LFE Lite runs its Rust/WASM Core inside a dedicated Web Worker. The public appli
 ## Release
 
 ```text
-SDK:  0.1.0-rc.2
-Core: v0.1.4 / d9a97cb
+SDK:         0.1.1
+Core:        0.1.0
+Core tag:    lfe-core-lite-v0.1.0
+Core commit: d9e8bae
 ```
 
-This release candidate is browser-only.
+This stable release is browser-only.
 
 ## Requirements
 
@@ -29,7 +31,7 @@ Node.js is used for SDK build and release tooling only. Node/SSR runtime support
 ## Install
 
 ```bash
-npm install @planeslogic/lfe-lite@next
+npm install @planeslogic/lfe-lite
 ```
 
 ## Create a runtime
@@ -83,7 +85,7 @@ Public sequence identifiers use `bigint`.
 
 ## Batch add
 
-The release-candidate batch API uses typed columns:
+The batch API uses typed columns:
 
 ```ts
 await lfe.addBatch({
@@ -156,6 +158,12 @@ await lfe.close();
 
 `close()` terminates the Worker and cleans SDK-owned lifecycle resources.
 
+## Contact
+
+General inquiries: [contact@planeslogic.com](mailto:contact@planeslogic.com)
+
+Support: [support@planeslogic.com](mailto:support@planeslogic.com)
+
 ## Distribution boundary
 
 The supported package API is only:
@@ -168,12 +176,97 @@ Internal Worker and implementation subpaths are not public APIs.
 
 The npm package ships the Worker bundle with the Core embedded in JavaScript representation. It does not ship a standalone `.wasm` asset.
 
-## Release-candidate legal status
+## Package legal status
 
-This technical release candidate uses package metadata:
+This release uses package metadata:
 
 ```text
 UNLICENSED
 ```
 
-This release candidate is distributed under `UNLICENSED` package metadata and is not an open-source grant. The public OSS repository and final source license remain separate release decisions.
+This release is distributed under `UNLICENSED` package metadata and is not an open-source grant. The public OSS repository and final source license remain separate release decisions.
+
+<!-- JSL-M8-RESOLVEEX-DOCS -->
+
+## ResolveEx and bounded result consumption
+
+`resolve()` remains the existing compatibility path when a normal `LfeSeqSet` is the right
+fit.
+
+For pipeline-oriented or potentially large candidate sets, use `resolveEx()` and consume the
+result in bounded chunks:
+
+```ts
+import { LfeLite } from "@planeslogic/lfe-lite";
+
+const lfe = await LfeLite.create();
+
+const result = await lfe.resolveEx({
+  op: "and",
+  args: [
+    { op: "eq", key: "status", value: 2 },
+    { op: "eq", key: "active", value: true },
+  ],
+});
+
+try {
+  while ((await result.remaining()) > 0) {
+    const seqs = await result.nextChunk(4096);
+
+    for (const seq of seqs) {
+      console.log(seq);
+    }
+  }
+} finally {
+  await result.release();
+}
+
+await lfe.close();
+```
+
+`LfeSeqSetEx` exposes:
+
+```ts
+size(): Promise<number>
+isEmpty(): Promise<boolean>
+remaining(): Promise<number>
+nextChunk(maxItems: number): Promise<bigint[]>
+release(): Promise<void>
+```
+
+Important semantics:
+
+- Source coordinates remain `bigint`.
+- Concatenating all returned chunks yields the same logical membership as `resolve()` for
+  the same state and query.
+- Materialized coordinates are deterministic ascending source coordinates.
+- `nextChunk(maxItems)` returns at most `maxItems` coordinates.
+- `nextChunk(0)` returns `[]` and does not advance the cursor.
+- After exhaustion, `remaining()` is `0` and further `nextChunk(...)` calls return `[]`.
+- `release()` is idempotent.
+- Closing the parent `LfeLite` runtime invalidates live result handles.
+
+The chunk size is a consumer transport parameter, not part of the semantic definition of
+SeqSetEx.
+
+### Browser development domains
+
+The browser SDK uses domain-based developer allowances for:
+
+```text
+localhost
+127.0.0.1
+*.local
+*.example.com
+```
+
+This browser behavior is separate from backend SDK development-license workflows.
+
+The browser SDK does not discover licenses from:
+
+```text
+/.well-known/lfe-lite/license.json
+```
+
+`/.well-known/<token>` is reserved for domain-ownership verification flows and is not a
+license-discovery endpoint.
